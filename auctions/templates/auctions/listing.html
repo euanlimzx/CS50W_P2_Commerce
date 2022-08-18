@@ -1,9 +1,14 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
+    <h2>{{listing.title}}</h2>
     <ul>
         <table class="table">
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Current Bid($)</th>
+            </tr>    
         <tr>
             <td>{{listing.title}}</td>
             <td>{{listing.description}}</td>
@@ -15,12 +20,24 @@
 <form action="{% url 'listing' listing.id %}" method="post">
     {% csrf_token %}
         {% if watchlist %}
-        <button type="submit" class="btn btn-light">Remove From Watchlist</button>
+        <button name="watchlist" type="submit" class="btn btn-light">Remove From Watchlist</button>
         {% else %}
-        <button type="submit" class="btn btn-light">Add to Watchlist</button>
+        <button name="watchlist" type="submit" class="btn btn-light">Add to Watchlist</button>
         {% endif %}
 </form>
 </div>
+<br>
+<div class="d-flex justify-content-end">
+<form action="{% url 'listing' listing.id %}" method="post">
+    {% csrf_token %}
+    <div class="input-group mb-3">
+    <span class="input-group-text">$</span>
+    <input type="number" min="{{listing.bid}}" class="form-control" name="newbid" placeholder="Minimum Bid: ${{listing.bid}}"> 
+    <button name="bid" type="submit" class="btn btn-primary">Make Bid</button>
+    </div>
+</form>
+</div>
+
 
 
 {% endblock %}

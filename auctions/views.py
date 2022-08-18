@@ -85,16 +85,22 @@ def create(request):
         return render(request,"auctions/create.html",{
         "listing":listing})
 
+@login_required
 def listing(request,listing_id):
     listing = Listing.objects.get(pk=listing_id)
     user = request.user
     if request.method == "POST":
-        if Watchlist.objects.filter(watchlisting=listing,watchlister=user).exists():
-            object=Watchlist.objects.get(watchlisting=listing,watchlister=user)
-            object.delete()
-        else:
-            object=Watchlist(watchlisting=listing,watchlister=user)
-            object.save()
+        if 'watchlist' in request.POST:
+            if Watchlist.objects.filter(watchlisting=listing,watchlister=user).exists():
+                object=Watchlist.objects.get(watchlisting=listing,watchlister=user)
+                object.delete()
+            else:
+                object=Watchlist(watchlisting=listing,watchlister=user)
+                object.save()
+        if 'bid' in request.POST:
+            newbid=request.POST["newbid"]
+            listing.bid=newbid
+            listing.save()
         return HttpResponseRedirect(reverse('listing',args=(listing_id,)))
     else:    
         try:
