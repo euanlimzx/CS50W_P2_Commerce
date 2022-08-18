@@ -5,9 +5,10 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import ListingForm
-from .models import User,Listing
+from django.shortcuts import get_object_or_404
 
+from .forms import ListingForm
+from .models import User,Listing,Watchlist
 from .models import User
 
 
@@ -85,4 +86,24 @@ def create(request):
         "listing":listing})
 
 def listing(request,listing_id):
-    return HttpResponse("this is the placeholder view for %s"%listing_id)
+    listing = Listing.objects.get(pk=listing_id)
+    user = request.user
+    if request.method == "POST":
+        if Watchlist.objects.filter(watchlisting=listing,watchlister=user).exists():
+            object=Watchlist.objects.get(watchlisting=listing,watchlister=user)
+            object.delete()
+        else:
+            object=Watchlist(watchlisting=listing,watchlister=user)
+            object.save()
+        return HttpResponseRedirect(reverse('listing',args=(listing_id,)))
+    else:    
+        try:
+            object = Watchlist.objects.get(watchlisting=listing,watchlister=user)
+            watchlist=[]
+            watchlist.append(object)
+        except Watchlist.DoesNotExist:
+            watchlist=[]
+        return render(request,"auctions/listing.html",{
+            "listing":listing,
+            "watchlist":watchlist
+        })

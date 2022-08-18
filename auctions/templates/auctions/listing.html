@@ -1,0 +1,26 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+    <ul>
+        <table class="table">
+        <tr>
+            <td>{{listing.title}}</td>
+            <td>{{listing.description}}</td>
+            <td>{{listing.bid}}</td>
+        </tr>
+        </table>
+    </ul>
+<div class="d-flex justify-content-end">
+<form action="{% url 'listing' listing.id %}" method="post">
+    {% csrf_token %}
+        {% if watchlist %}
+        <button type="submit" class="btn btn-light">Remove From Watchlist</button>
+        {% else %}
+        <button type="submit" class="btn btn-light">Add to Watchlist</button>
+        {% endif %}
+</form>
+</div>
+
+
+{% endblock %}

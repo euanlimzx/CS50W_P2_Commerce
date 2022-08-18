@@ -17,3 +17,7 @@ class Listing(models.Model):
         ("home","Home")
     )
     category =models.CharField(max_length=64,choices=categories)
+
+class Watchlist(models.Model):
+    watchlister = models.ForeignKey(User,on_delete=models.CASCADE,related_name="watchlister")
+    watchlisting = models.ForeignKey(Listing,on_delete=models.CASCADE,related_name="watchlisting")
