@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+    <ul>
+        <table class="table">
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Current Bid</th>
+                <th>Bid</th>
+            </tr>
+ 
+        {% for listing in listings %}
+        <tr>
+            <td>{{listing.title}}</td>
+            <td>{{listing.description}}</td>
+            <td>{{listing.bid}}</td>
+            <td>placeholder</td>
+        </tr>
+        {% endfor %}
+        </table>
+    </ul>
+{% endblock %}
