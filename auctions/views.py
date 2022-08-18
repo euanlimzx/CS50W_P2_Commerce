@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 
 from .forms import ListingForm
-from .models import User,Listing,Watchlist
+from .models import User,Listing,Watchlist,Bid
 from .models import User
 
 
@@ -101,6 +101,8 @@ def listing(request,listing_id):
             newbid=request.POST["newbid"]
             listing.bid=newbid
             listing.save()
+            bid = Bid(bidder=user,bidlisting=listing,bidvalue=newbid)
+            bid.save()
         return HttpResponseRedirect(reverse('listing',args=(listing_id,)))
     else:    
         try:
@@ -113,3 +115,13 @@ def listing(request,listing_id):
             "listing":listing,
             "watchlist":watchlist
         })
+
+def watchlist(request):
+    user=request.user
+    watchlisting=Watchlist.objects.filter(watchlister=user)
+    listing=[]
+    for i in range(len(watchlisting)):
+        listing.append(watchlisting[i].watchlisting)
+    return render(request,"auctions/watchlist.html",{
+        "listings":listing
+    })

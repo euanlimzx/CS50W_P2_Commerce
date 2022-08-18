@@ -21,3 +21,8 @@ class Listing(models.Model):
 class Watchlist(models.Model):
     watchlister = models.ForeignKey(User,on_delete=models.CASCADE,related_name="watchlister")
     watchlisting = models.ForeignKey(Listing,on_delete=models.CASCADE,related_name="watchlisting")
+
+class Bid(models.Model):
+    bidvalue = models.PositiveIntegerField()
+    bidder= models.ForeignKey(User,on_delete=models.CASCADE,related_name="bidlister")
+    bidlisting = models.ForeignKey(Listing,on_delete=models.CASCADE,related_name="bidlisting")
