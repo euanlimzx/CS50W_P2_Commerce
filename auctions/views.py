@@ -75,11 +75,14 @@ def create(request):
         if listing.is_valid():
             listing.instance.account = request.user
             listing.save(commit=False)
-            
             listing.save()
-            messages.success(request,("done!"))
+            return HttpResponseRedirect(reverse("listing",args=(listing.instance.id,)))
         else:
             messages.error(request,"error")
-    listing = ListingForm()
-    return render(request,"auctions/create.html",{
+    else:
+        listing = ListingForm()
+        return render(request,"auctions/create.html",{
         "listing":listing})
+
+def listing(request,listing_id):
+    return HttpResponse("this is the placeholder view for %s"%listing_id)
