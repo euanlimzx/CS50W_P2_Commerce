@@ -7,10 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 
-from .forms import ListingForm
-from .models import User,Listing,Watchlist,Bid,Win
-from .models import User
-
+from .forms import ListingForm,CommentForm
+from .models import User,Listing,Watchlist,Bid,Win,Comment
 
 def index(request):
     return render(request, "auctions/index.html",{
@@ -69,7 +67,7 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-@login_required
+@login_required(login_url='login')
 def create(request):
     if request.method == "POST":
         listing=ListingForm(request.POST)
@@ -85,7 +83,7 @@ def create(request):
         return render(request,"auctions/create.html",{
         "listing":listing})
 
-@login_required
+@login_required(login_url='login')
 def listing(request,listing_id):
     listing = Listing.objects.get(pk=listing_id)
     user = request.user
@@ -129,8 +127,16 @@ def listing(request,listing_id):
                 winner=user
                 object=Win(winlisting=winlisting,winner=winner)
                 object.save()
+        if 'commentform' in request.POST:
+            comment=CommentForm(request.POST)
+            if comment.is_valid():
+                newcomment=comment.save(commit=False)
+                newcomment.commenter=user
+                newcomment.commentlisting=listing
+                newcomment.save()                
         return HttpResponseRedirect(reverse('listing',args=(listing_id,)))
     else:
+        #the code here is just for determinant 4
         winner=[]
         try:
             object=Win.objects.get(winlisting=listing)
@@ -149,11 +155,17 @@ def listing(request,listing_id):
             watchlist.append(object)
         except Watchlist.DoesNotExist:
             watchlist=[]
+        #the code below here is for the comment section
+        commentform = CommentForm()
+        comments=Comment.objects.filter(commentlisting=listing).order_by("-date")
+
         return render(request,"auctions/listing.html",{
             "listing":listing,
             "watchlist":watchlist,
             "determinant":determinant,
-            "winner":winner
+            "winner":winner,
+            "comments":comments,
+            "commentform":commentform
         })
 
 def watchlist(request):
@@ -166,5 +178,17 @@ def watchlist(request):
         "listings":listing
     })
 
-def category(request):    
-    return HttpResponse("lol")
+def categories(request):    
+    category=[c[1] for c in Listing.categories]
+    return render(request, "auctions/categories.html",{
+        "categories":category
+    })
+
+def category(request,category):
+    category=category.lower()
+    listings=Listing.objects.filter(category=category)
+    category=category.capitalize()
+    return render(request,"auctions/category.html",{
+        "listings":listings,
+        "category":category
+    })
