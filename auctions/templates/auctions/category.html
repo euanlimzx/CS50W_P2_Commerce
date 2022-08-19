@@ -1,13 +1,12 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
+    <h2 style="text-align:center">{{category}}</h2>
     <ul>
         <table class="table">
             <tr>
                 <th>Title</th>
                 <th>Description</th>
-                <th>Category</th>
                 <th>Current Bid($)</th>
                 <th>Place Bid</th>
             </tr>
@@ -15,7 +14,6 @@
         <tr>
             <td>{{listing.title}}</td>
             <td>{{listing.description}}</td>
-            <td>{{listing.get_category_display}}</td>
             <td>{{listing.bid}}</td>
             <td><a href="{%url 'listing' listing.id %}">Bid</a></td>
         </tr>

@@ -16,7 +16,7 @@
         <tr>
             <td>{{listing.title}}</td>
             <td>{{listing.description}}</td>
-            <td>{{listing.category}}</td>
+            <td>{{listing.get_category_display}}</td>
             <td>{{listing.bid}}</td>
             <td><a href="{%url 'listing' listing.id %}">View</a></td>
         </tr>

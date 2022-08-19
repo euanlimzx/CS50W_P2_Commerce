@@ -30,3 +30,9 @@ class Bid(models.Model):
 class Win(models.Model):
     winlisting=models.ForeignKey(Listing,on_delete=models.CASCADE,related_name="winlisting")
     winner=models.ForeignKey(User,on_delete=models.CASCADE,related_name="winner")
+
+class Comment(models.Model):
+    commentlisting=models.ForeignKey(Listing,on_delete=models.CASCADE,related_name="commentlisting")
+    comment=models.CharField(max_length=300)
+    commenter=models.ForeignKey(User,on_delete=models.CASCADE,related_name="commenter")
+    date=models.DateTimeField(auto_now=True)
