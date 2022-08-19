@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 
 from .forms import ListingForm
-from .models import User,Listing,Watchlist,Bid
+from .models import User,Listing,Watchlist,Bid,Win
 from .models import User
 
 
@@ -89,6 +89,21 @@ def create(request):
 def listing(request,listing_id):
     listing = Listing.objects.get(pk=listing_id)
     user = request.user
+    try:
+        win = Win.objects.get(winlisting=listing)
+        determinant = 2
+        if listing.account==user:
+            determinant=4
+        #if closed(creator)
+        if win.winner==user and listing.account != user:
+            determinant=3    
+        #if closed(winner)
+        #if closed(regular)
+    except Win.DoesNotExist:
+        if listing.account==user:
+            determinant=1
+        else:
+            determinant=0
     if request.method == "POST":
         if 'watchlist' in request.POST:
             if Watchlist.objects.filter(watchlisting=listing,watchlister=user).exists():
@@ -103,8 +118,31 @@ def listing(request,listing_id):
             listing.save()
             bid = Bid(bidder=user,bidlisting=listing,bidvalue=newbid)
             bid.save()
+        if 'close' in request.POST:
+            winlisting=listing
+            try:
+                bid = Bid.objects.filter(bidlisting=listing).order_by('-bidvalue').first()
+                winner=bid.bidder
+                object=Win(winlisting=winlisting,winner=winner)
+                object.save()
+            except:
+                winner=user
+                object=Win(winlisting=winlisting,winner=winner)
+                object.save()
         return HttpResponseRedirect(reverse('listing',args=(listing_id,)))
-    else:    
+    else:
+        winner=[]
+        try:
+            object=Win.objects.get(winlisting=listing)
+            if determinant==4:
+                if object.winner == user:
+                    winner=[]
+                else:
+                    winner=[]
+                    winner.append(object)
+        except:
+            pass
+        #this code below is purely just for the watchlist function    
         try:
             object = Watchlist.objects.get(watchlisting=listing,watchlister=user)
             watchlist=[]
@@ -113,7 +151,9 @@ def listing(request,listing_id):
             watchlist=[]
         return render(request,"auctions/listing.html",{
             "listing":listing,
-            "watchlist":watchlist
+            "watchlist":watchlist,
+            "determinant":determinant,
+            "winner":winner
         })
 
 def watchlist(request):
@@ -125,3 +165,6 @@ def watchlist(request):
     return render(request,"auctions/watchlist.html",{
         "listings":listing
     })
+
+def category(request):    
+    return HttpResponse("lol")

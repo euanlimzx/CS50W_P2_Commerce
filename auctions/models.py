@@ -26,3 +26,7 @@ class Bid(models.Model):
     bidvalue = models.PositiveIntegerField()
     bidder= models.ForeignKey(User,on_delete=models.CASCADE,related_name="bidlister")
     bidlisting = models.ForeignKey(Listing,on_delete=models.CASCADE,related_name="bidlisting")
+
+class Win(models.Model):
+    winlisting=models.ForeignKey(Listing,on_delete=models.CASCADE,related_name="winlisting")
+    winner=models.ForeignKey(User,on_delete=models.CASCADE,related_name="winner")

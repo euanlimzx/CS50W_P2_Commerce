@@ -7,14 +7,15 @@
             <tr>
                 <th>Title</th>
                 <th>Description</th>
+                <th>Category</th>
                 <th>Current Bid($)</th>
                 <th>Place Bid</th>
             </tr>
- 
         {% for listing in listings %}
         <tr>
             <td>{{listing.title}}</td>
             <td>{{listing.description}}</td>
+            <td>{{listing.category}}</td>
             <td>{{listing.bid}}</td>
             <td><a href="{%url 'listing' listing.id %}">Bid</a></td>
         </tr>

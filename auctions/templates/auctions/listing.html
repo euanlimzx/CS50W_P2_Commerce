@@ -2,16 +2,19 @@
 
 {% block body %}
     <h2>{{listing.title}}</h2>
+{% if determinant is 0%}
     <ul>
         <table class="table">
             <tr>
                 <th>Title</th>
                 <th>Description</th>
+                <th>Category</th>
                 <th>Current Bid($)</th>
             </tr>    
         <tr>
             <td>{{listing.title}}</td>
             <td>{{listing.description}}</td>
+            <td>{{listing.category}}</td>
             <td>{{listing.bid}}</td>
         </tr>
         </table>
@@ -37,7 +40,56 @@
     </div>
 </form>
 </div>
+{% endif %}
 
+{% if determinant is 1%}
+<ul>
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Current Bid($)</th>
+        </tr>    
+    <tr>
+        <td>{{listing.title}}</td>
+        <td>{{listing.description}}</td>
+        <td>{{listing.category}}</td>
+        <td>{{listing.bid}}</td>
+    </tr>
+    </table>
+</ul>
+<div class="d-flex justify-content-center">
+    <form action="{% url 'listing' listing.id %}" method="post">
+        {% csrf_token %}
+            <button name="close" type="submit" class="btn btn-danger">Close Listing</button>
+    </form>
+    </div>
+{% endif %}
 
+{% if determinant is 2%}
+<div class="alert alert-danger" role="alert">
+    This auction has closed. You did not win this auction.
+</div>
+{% endif %}
+
+{% if determinant is 3%}
+<div class="alert alert-success" role="alert">
+    You have won this auction! Congratulations!
+</div>
+{% endif %}
+
+{% if determinant is 4%}
+<div class="alert alert-warning" role="alert">
+    You have closed this auction.
+    {% if winner %}
+    {% for win in winner %}
+    User {{win.winner}} has won the auction.
+    {% endfor %}
+    {% else %}
+    There were no succesful bidders. 
+    {% endif %}
+  </div>
+{% endif %}
 
 {% endblock %}
